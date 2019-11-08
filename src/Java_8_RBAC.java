@@ -11,7 +11,7 @@ class Node {
     Node descendant;
 
     String roleName;
-    String descendantName;
+    String descendantName = null;
 }
 
 class NRBAC {
@@ -19,6 +19,7 @@ class NRBAC {
     //create a HashMap to store role hierarchy.
     static HashMap<String, Node> roleHierarchy = new HashMap<>();
     static HashMap<String, Node> addedRoles = new HashMap<>();
+    static Map<String, List<String>> permissionHash = new HashMap<>();
     static ArrayList<String> descendantRole = new ArrayList<>();
     static String[] allRoles;
     static ArrayList<String> runningRoles = new ArrayList<>();
@@ -27,7 +28,6 @@ class NRBAC {
     static ArrayList<String> grantRoles = new ArrayList<>();
     static ArrayList<String> grantAccessRights = new ArrayList<>();
     static ArrayList<String> grantObjects = new ArrayList<>();
-    static String[] permissionRolesArray;
     static String twoD[][];
 
     public static void main(String[] args) throws Exception {
@@ -60,7 +60,6 @@ class NRBAC {
                                     " " + allRoles[1] + ">. ");
                             promptEnterKey();
                             break second;
-
                         }
 
                         readLines++;
@@ -69,17 +68,11 @@ class NRBAC {
                         // Put elements in the map. (R2's name, R2's role class)
                         addedRoles.put(newRole.roleName, newRole);
                         runningRoles.add(allRoles[0]);
-                        //runningRoles.add(allRoles[1]);
-                        //System.out.println("roles: " + allRoles[0] + '\t' + allRoles[1]);
-
                     }
                     exitLoop = true;
                 }
-                //System.out.print("break out first\n");
             }
-
         }
-        //System.out.print("break out third\n");
 
         bufferedReader.close();
         roleHierarchy.putAll(addedRoles);
@@ -89,11 +82,13 @@ class NRBAC {
 
         // Display the set.
         for(HashMap.Entry<String, Node> printSet : setMap) {
+
             // create a String of setDescendants and get values from the set of entries.
             String setDescendants = printSet.getValue().descendantName;
-            // Search roleHierarchy for descendants Key value, create if it doesn't exist and put in roleHierarchy and
+            // Search roleHierarchy for descendants Key value, create if it doesn't exist and put roleHierarchy and
             // descendantsRole String.
             if (!roleHierarchy.containsKey(setDescendants)) {
+
                 Node newRole = new Node();
                 newRole.roleName = setDescendants;
                 roleHierarchy.put(setDescendants, newRole);
@@ -106,6 +101,7 @@ class NRBAC {
         }
 
         for (int i = 0; i < descendantRole.size(); i++) {
+
             System.out.println();
             printTree(descendantRole.get(i), 0);
         }
@@ -118,159 +114,135 @@ class NRBAC {
         String objectsString;
         String[] objectsArray;
 
-        //find root in descendant list
-//        for(int i = 0; i < descendantRole.size() - 1 ; i++){
-//            String tempDesc = descendantRole.get(i);
-//            for (int j = i + 1; j < descendantRole.size(); j++){
-//                String tempDesc2 = descendantRole.get(j);
-////                if(tempDesc.equals(tempDesc2)) {
-////                    descendantRoleRemove = descendantRole;
-////                    descendantRole.remove(j);
-////                }
-//            }
-//        }
-
         System.out.print("\t");
         for(String element3: descendantRole) {
+
             allObjects.add(element3);
             listRoles.add(element3);
-            //System.out.print(element3 + "\t");
         }
         for(String element2: runningRoles) {
+
             allObjects.add(element2);
             listRoles.add(element2);
-            //System.out.print(element2 + "\t");
         }
         while((objectsString = brResourceObjects.readLine()) != null) {
 
             objectsArray = objectsString.split("\\s+");
             for(String element: objectsArray) {
+
                 allObjects.add(element);
-                //System.out.print(element + "\t");
             }
-            //System.out.print(allObjects);
         }
         for(String element4: allObjects) {
-            //allObjects.add(element4);
+
             System.out.print(element4 + "\t\t");
         }
         System.out.println();
 
         int rows = listRoles.size();
         int columns = allObjects.size();
-
         twoD = new String[rows][columns];
-//        twoD[listRoles.indexOf("R1")][allObjects.indexOf("R2")] = "read";
-//        twoD[listRoles.indexOf("R2")][allObjects.indexOf("R3")] = "write";
-        //twoD[0][1] = "write";
-        int x, y, z = 0;
 
+        // GRID PRINTING
+        int x, y, z = 0;
 //        for(x = 0; x < rows; x++) {
+
 //            for(y = 0; y < columns; y++) {
 //                twoD[x][y] = "----";
 //                z++;
 //            }
 //        }
-//        twoD[listRoles.indexOf("R1")][allObjects.indexOf("R2")] = "read";
-//        twoD[listRoles.indexOf("R2")][allObjects.indexOf("R3")] = "write";
-//        twoD[listRoles.indexOf("R3")][allObjects.indexOf("R4")] = "execute";
 
         for(x = 0; x < rows; x++) {
 
             System.out.print(listRoles.get(x));
             System.out.print("\t");
-
             for (y = 0; y < columns; y++) {
 
                 System.out.print(twoD[x][y] + "\t");
-                //System.out.print("-" + "\t");
             }
             System.out.println();
-
         }
 
         System.out.println("\nReadPermissionToRoles block: ");
 
         File readPermissionToRoles = new File("permissionsToRoles.txt");
         BufferedReader brPermissionToRoles = new BufferedReader(new FileReader(readPermissionToRoles));
-        // String to store roles from txt file.
         String permissionRolesString;
         String[] permissionRolesArray;
-//        ArrayList<String> arrayList;
-        //ArrayList<String> permissionRolesList = new ArrayList<>();
-
 
         while((permissionRolesString = brPermissionToRoles.readLine()) != null) {
 
             permissionRolesArray = permissionRolesString.split("\\s+");
-//            arrayList = new ArrayList<>(Arrays.asList(permissionRolesArray));
-//            for(String elementZ: arrayList) {
-//
-//                System.out.print(elementZ);
-//                //grantRoles.add(elementZ);
-//                System.out.println();
-//
-//            }
-
-            //System.out.println(permissionRolesArray[0]);
             grantRoles.add(permissionRolesArray[0]);
-////            System.out.println(grantRoles);
             grantAccessRights.add(permissionRolesArray[1]);
-////            System.out.println(grantAccessRights);
             grantObjects.add(permissionRolesArray[2]);
-//            System.out.println(grantObjects);
-
         }
 
-
-        //grantRoles.add(permissionRolesArray[0]);
         System.out.println("\ngranting roles: " + grantRoles);
-        //grantAccessRights.add(permissionRolesArray[1]);
         System.out.println("access rights: " + grantAccessRights);
-        //grantObjects.add(permissionRolesArray[2]);
         System.out.println("granted objects: " + grantObjects);
-
-        //assignToGrid(grantRoles.get(0), grantObjects.get(0), grantAccessRights.get(0));
         System.out.println();
-        //System.out.println(grantRoles.get(0));
-//        System.out.println(grantObjects.get(0));
-//        System.out.println(grantAccessRights.get(0));
 
         for(int k = 0; k < grantRoles.size(); k++) {
 
             assignToGrid(grantRoles.get(k), grantAccessRights.get(k), grantObjects.get(k));
+
+            permissionHash.computeIfAbsent(grantObjects.get(k), rightsList -> new ArrayList<>()).add(grantAccessRights.get(k));
+
+
+
+            if (roleHierarchy.get(grantObjects.get(k)).descendantName != null) {
+
+                if(!permissionHash.get(roleHierarchy.get(grantObjects.get(k)).descendantName).contains(grantAccessRights.get(k))) {
+                    //System.out.println("Rights1");
+                    permissionHash.computeIfAbsent(roleHierarchy.get(grantObjects.get(k)).descendantName, rightsList -> new ArrayList<>()).add(grantAccessRights.get(k));
+                }
+                if(!permissionHash.get(roleHierarchy.get(grantObjects.get(k)).descendantName).contains("own")) {
+                    //System.out.println("Own1");
+                    permissionHash.computeIfAbsent(roleHierarchy.get(grantObjects.get(k)).descendantName, rightsList -> new ArrayList<>()).add("own");
+                }
+                if(!permissionHash.get(grantObjects.get(k)).contains("control")) {
+                    //System.out.println("Control1");
+                    permissionHash.computeIfAbsent(grantObjects.get(k), rightsList -> new ArrayList<>()).add("control");
+                }
+                //permissionHash.computeIfAbsent(grantObjects.get(k), rightsList -> new ArrayList<>()).add("control");
+                if(!permissionHash.get(roleHierarchy.get(grantObjects.get(k)).descendantName).contains("control")) {
+                    //System.out.println("Control2");
+                    permissionHash.computeIfAbsent(roleHierarchy.get(grantObjects.get(k)).descendantName, rightsList -> new ArrayList<>()).add("control");
+                }
+//
+                assignToGrid(grantObjects.get(k), grantAccessRights.get(k), roleHierarchy.get(grantObjects.get(k)).descendantName);
+            }
+
+            System.out.println(permissionHash);
+            System.out.println();
+            //System.out.println("R1" + " = " + permissionHash.get("R1"));
         }
 
-        //twoD[listRoles.indexOf(grantRoles.get(0))][allObjects.indexOf(objects)] = accessRights;
-
-
-//        twoD[listRoles.indexOf("R1")][allObjects.indexOf("R2")] = "read";
-//        twoD[listRoles.indexOf("R2")][allObjects.indexOf("R3")] = "write";
-//        twoD[listRoles.indexOf("R1")][allObjects.indexOf("R2")] = "read";
-//        twoD[listRoles.indexOf("R2")][allObjects.indexOf("R3")] = "write";
-//        twoD[listRoles.indexOf("R3")][allObjects.indexOf("R4")] = "execute";
-
+        // Print 2nd Grid
+        System.out.println();
         System.out.print("\t");
         for(String element4: allObjects) {
             //allObjects.add(element4);
             System.out.print(element4 + "\t\t");
         }
-
-
         System.out.println();
         for(x = 0; x < rows; x++) {
 
             System.out.print(listRoles.get(x));
             System.out.print("\t");
-
             for (y = 0; y < columns; y++) {
 
                 System.out.print(twoD[x][y] + "\t");
-                //System.out.print("-" + "\t");
             }
             System.out.println();
-
         }
+//        Print 2D Array
+//        System.out.println();
+//        for(int i = 0; i < twoD.length; i++) {
+//            System.out.println(Arrays.toString(twoD[i]));
+//        }
     }
 
 
