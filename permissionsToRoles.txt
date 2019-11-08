@@ -1,0 +1,9 @@
+R2  write*  R1
+R3  read    R1
+R4  read    R2
+R5  write*  R2
+R6  write*  R2
+R7  write*  R3
+R8  write*  R6
+R9  write*  R7
+R10  write*  R7
